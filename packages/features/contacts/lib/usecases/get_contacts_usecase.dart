@@ -5,7 +5,7 @@ import 'package:core/core.dart';
 import '../repositories/contacts_repository.dart';
 
 /// Use case for getting the list of contacts.
-class GetContactsUsecase extends Usecase<List<User>, NoParams> {
+class GetContactsUsecase extends UseCase<List<User>, NoParams> {
   final ContactsRepository repository;
 
   GetContactsUsecase(this.repository);

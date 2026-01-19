@@ -19,7 +19,7 @@ class ContactsRepository extends BaseRepository {
         const User(id: '2', name: 'Bob', isOnline: false, lastSeen: null),
       ]);
     } catch (e) {
-      return Left(Failure(message: 'Failed to load contacts: $e'));
+      return Left(CacheFailure('Failed to load contacts: $e'));
     }
   }
 
@@ -30,7 +30,7 @@ class ContactsRepository extends BaseRepository {
       // In real, get current list, add, save
       return const Right(null);
     } catch (e) {
-      return Left(Failure(message: 'Failed to add contact: $e'));
+      return Left(CacheFailure('Failed to add contact: $e'));
     }
   }
 }
