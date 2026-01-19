@@ -63,6 +63,17 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
+  # Sharing
+  share_plus: ^10.0.0
+
+  # Local packages
+  core:
+    path: ../../packages/core
+  contacts:
+    path: ../../packages/features/contacts
+  signaling:
+    path: ../../packages/signaling
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

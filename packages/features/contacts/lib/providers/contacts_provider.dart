@@ -45,4 +45,10 @@ class ContactsProvider extends ChangeNotifier {
     _contacts.add(user);
     notifyListeners();
   }
+
+  Future<void> removeContact(User user) async {
+    // For now, just remove from list
+    _contacts.remove(user);
+    notifyListeners();
+  }
 }

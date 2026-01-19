@@ -10,33 +10,145 @@ class SettingsTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<AppProvider>(
       builder: (context, provider, child) {
-        return ListView(
-          padding: const EdgeInsets.all(16.0),
-          children: [
-            const Text('Theme', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            SwitchListTile(
-              title: const Text('Dark Mode'),
-              subtitle: const Text('Toggle between light and dark theme'),
-              value: provider.themeMode == ThemeMode.dark,
-              onChanged: (value) {
-                provider.setThemeMode(value ? ThemeMode.dark : ThemeMode.light);
-              },
-            ),
-            const SizedBox(height: 20),
-            const Text('Language', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            DropdownButton<Locale>(
-              value: provider.locale,
-              items: const [
-                DropdownMenuItem(value: Locale('en'), child: Text('English')),
-                DropdownMenuItem(value: Locale('ru'), child: Text('Русский')),
-              ],
-              onChanged: (locale) {
-                if (locale != null) {
-                  provider.setLocale(locale);
-                }
-              },
-            ),
-          ],
+        return Scaffold(
+          body: ListView(
+            padding: const EdgeInsets.all(16.0),
+            children: [
+              // User Profile
+              const CircleAvatar(
+                radius: 40,
+                child: Icon(Icons.person, size: 40),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'John Doe', // Placeholder
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                '+1 234 567 890', // Placeholder
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 32),
+              // Settings
+              const Text('Settings', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 16),
+              SwitchListTile(
+                title: const Text('Уведомления и звуки'),
+                value: true, // Placeholder
+                onChanged: (value) {
+                  // TODO: Handle notifications
+                },
+              ),
+              ListTile(
+                title: const Text('Оформление и тема'),
+                subtitle: Text(provider.themeMode == ThemeMode.dark ? 'Тёмная' : 'Светлая'),
+                onTap: () {
+                  // TODO: Theme selection
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Выберите тему'),
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ListTile(
+                            title: const Text('Светлая'),
+                            onTap: () {
+                              provider.setThemeMode(ThemeMode.light);
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          ListTile(
+                            title: const Text('Тёмная'),
+                            onTap: () {
+                              provider.setThemeMode(ThemeMode.dark);
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          ListTile(
+                            title: const Text('Как в системе'),
+                            onTap: () {
+                              provider.setThemeMode(ThemeMode.system);
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+              ListTile(
+                title: const Text('Язык'),
+                subtitle: const Text('Русский'),
+                onTap: () {
+                  // TODO: Language selection
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Выберите язык'),
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ListTile(
+                            title: const Text('Русский'),
+                            onTap: () {
+                              provider.setLocale(const Locale('ru'));
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          ListTile(
+                            title: const Text('English'),
+                            onTap: () {
+                              provider.setLocale(const Locale('en'));
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 32),
+              // Logout
+              ElevatedButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Вы действительно хотите выйти?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: const Text('Отмена'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            // TODO: Logout logic
+                            Navigator.of(context).pop();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Logged out')),
+                            );
+                          },
+                          child: const Text('Выйти'),
+                          style: TextButton.styleFrom(foregroundColor: Colors.red),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text('Выйти'),
+              ),
+            ],
+          ),
         );
       },
     );

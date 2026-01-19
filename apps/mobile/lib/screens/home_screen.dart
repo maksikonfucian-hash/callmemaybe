@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 
 import 'settings_tab.dart';
 import 'contacts_tab.dart';
+import 'calls_tab.dart';
+import 'notes_tab.dart';
 
 /// Home screen with bottom navigation for main features.
-/// Provides navigation between Friends, Calls, and Settings.
-/// Includes a floating action button for sharing the app with friends.
+/// Provides navigation between Friends, Calls, Notes, and Settings.
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -18,7 +19,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   static const List<Widget> _pages = <Widget>[
     ContactsTab(),
-    Center(child: Text('Calls Tab')),   // Placeholder
+    CallsTab(),
+    NotesTab(),
     SettingsTab(),
   ];
 
@@ -31,9 +33,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Call Me Maybe'),
-      ),
       body: IndexedStack(
         index: _selectedIndex,
         children: _pages,
@@ -42,29 +41,24 @@ class _HomeScreenState extends State<HomeScreen> {
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.people),
-            label: 'Friends',
+            label: 'Друзья',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.call),
-            label: 'Calls',
+            label: 'Звонки',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.note),
+            label: 'Заметки',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
-            label: 'Settings',
+            label: 'Настройки',
           ),
         ],
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Share app logic
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Share app with friends')),
-          );
-        },
-        tooltip: 'Share App',
-        child: const Icon(Icons.share),
+        type: BottomNavigationBarType.fixed,
       ),
     );
   }
