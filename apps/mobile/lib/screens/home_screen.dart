@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'settings_tab.dart';
+
 /// Home screen with TabBar for main features.
 /// Provides navigation between Friends, Calls, and Settings tabs.
 /// Includes a floating action button for sharing the app with friends.
@@ -27,8 +29,8 @@ class HomeScreen extends StatelessWidget {
             Center(child: Text('Friends Tab')),
             // Placeholder for CallsTab from recents feature
             Center(child: Text('Calls Tab')),
-            // Placeholder for SettingsTab from settings feature
-            Center(child: Text('Settings Tab')),
+            // SettingsTab
+            SettingsTab(),
           ],
         ),
         floatingActionButton: FloatingActionButton(
