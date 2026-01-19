@@ -1,0 +1,19 @@
+name: core
+description: Core package for shared entities, repositories, usecases, and failures.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ^3.10.7
+
+dependencies:
+  flutter:
+    sdk: flutter
+  fpdart: ^1.1.0
+  equatable: ^2.0.5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  mockito: ^5.4.4
+  build_runner: ^2.4.9

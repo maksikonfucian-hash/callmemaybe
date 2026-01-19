@@ -1,0 +1,24 @@
+name: webrtc_engine
+description: WebRTC engine integrating JS logic via flutter_js and LiveKit fallback.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ^3.10.7
+
+dependencies:
+  flutter:
+    sdk: flutter
+  core:
+    path: ../core
+  signaling:
+    path: ../signaling
+  flutter_js: ^0.8.1
+  livekit_client: ^2.1.0
+  path_provider: ^2.1.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  mockito: ^5.4.4
+  build_runner: ^2.4.9
