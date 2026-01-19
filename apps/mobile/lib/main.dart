@@ -4,6 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'screens/home_screen.dart';
 import 'providers/app_provider.dart';
+import 'package:contacts/contacts.dart';
 
 void main() {
   runApp(const MyApp());
