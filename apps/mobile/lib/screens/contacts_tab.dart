@@ -13,33 +13,50 @@ class ContactsTab extends StatefulWidget {
 }
 
 class _ContactsTabState extends State<ContactsTab> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ContactsProvider>().loadContacts();
+    });
+  }
+
   void _showContactMenu(User user) {
     showModalBottomSheet(
       context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
       builder: (context) {
-        return SafeArea(
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: const Icon(Icons.call),
-                title: const Text('Позвонить'),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  // TODO: Navigate to active call screen
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Calling ${user.name}')),
-                  );
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.delete),
-                title: const Text('Удалить из друзей'),
+                title: Text(
+                  'Удалить из друзей',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.red.shade400, fontWeight: FontWeight.w500),
+                ),
                 onTap: () {
                   Navigator.of(context).pop();
                   _showDeleteConfirmation(user);
                 },
               ),
+              const Divider(),
+              ListTile(
+                title: const Text(
+                  'Позвонить',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontWeight: FontWeight.w500),
+                ),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  // Logic for calling
+                },
+              ),
+              const SizedBox(height: 10),
             ],
           ),
         );
@@ -52,119 +69,133 @@ class _ContactsTabState extends State<ContactsTab> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Вы уверены, что хотите удалить ${user.name}?'),
-          content: const Text('Это действие нельзя отменить.'),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: Text(
+            'Вы уверены, что хотите удалить ${user.name}?',
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 16),
+          ),
+          content: const Text(
+            'Восстановить действие будет невозможно',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 14, color: Colors.grey),
+          ),
+          actionsAlignment: MainAxisAlignment.spaceEvenly,
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Отмена'),
+              child: const Text('Отмена', style: TextStyle(color: Colors.black)),
             ),
-            TextButton(
+            ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                // Remove from list
-                final provider = context.read<ContactsProvider>();
-                provider.removeContact(user);
-                // Show banner
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('${user.name} удалён(а) из списка друзей'),
-                    duration: const Duration(seconds: 3),
-                  ),
-                );
+                context.read<ContactsProvider>().removeContact(user);
               },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
               child: const Text('Удалить'),
-              style: TextButton.styleFrom(foregroundColor: Colors.red),
             ),
           ],
         );
       },
     );
   }
-  @override
-  void initState() {
-    super.initState();
-    // Load contacts on init
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ContactsProvider>().loadContacts();
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<ContactsProvider>(
       builder: (context, provider, child) {
-        if (provider.isLoading) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        if (provider.error != null) {
-          return Center(child: Text('Error: ${provider.error}'));
-        }
-
-        if (provider.contacts.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  'Начните с приглашения друзей',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  'После добавления друзей можно звонить и общаться без ограничений.',
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 32),
-                ElevatedButton(
-                  onPressed: () {
-                    Share.share(
-                      'Присоединяйся к Call Me Maybe! Скачай приложение: [ссылка на скачивание]',
-                      subject: 'Приглашение в Call Me Maybe',
-                    );
-                  },
-                  child: const Text('Пригласить друзей'),
-                ),
-              ],
-            ),
-          );
-        }
-
         return Scaffold(
           appBar: AppBar(
             title: const Text('Друзья'),
             actions: [
-              IconButton(
-                icon: const Icon(Icons.add),
-                onPressed: () {
-                  // TODO: Add friend
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Add friend')),
-                  );
-                },
-              ),
+              if (provider.contacts.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(right: 16.0),
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: Colors.blue,
+                      shape: BoxShape.circle,
+                    ),
+                    child: IconButton(
+                      icon: const Icon(Icons.add, color: Colors.white),
+                      onPressed: () {},
+                    ),
+                  ),
+                ),
             ],
           ),
-          body: ListView.builder(
-            itemCount: provider.contacts.length,
-            itemBuilder: (context, index) {
-              final user = provider.contacts[index];
-              return ListTile(
-                leading: CircleAvatar(
-                  backgroundImage: user.photoUrl != null ? NetworkImage(user.photoUrl!) : null,
-                  child: user.photoUrl == null ? Text(user.name[0]) : null,
-                ),
-                title: Text(user.name),
-                subtitle: Text(user.isOnline ? 'Online' : 'Offline'),
-                trailing: IconButton(
-                  icon: const Icon(Icons.info),
-                  onPressed: () => _showContactMenu(user),
-                ),
-                onTap: () => _showContactMenu(user),
-              );
-            },
+          body: provider.isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : provider.contacts.isEmpty
+                  ? _buildEmptyState()
+                  : _buildContactsList(provider.contacts),
+        );
+      },
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Padding(
+      padding: const EdgeInsets.all(40.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.stars, size: 48, color: Colors.blue),
+          const SizedBox(height: 32),
+          const Text(
+            'Начните с приглашения друзей',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            'Как только они присоединятся, вы сможете звонить и общаться без ограничений.',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 14, color: Colors.grey),
+          ),
+          const SizedBox(height: 48),
+          SizedBox(
+            width: double.infinity,
+            height: 56,
+            child: ElevatedButton(
+              onPressed: () {
+                Share.share('Присоединяйся к Call Me Maybe!');
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              ),
+              child: const Text('Пригласить друзей', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContactsList(List<User> contacts) {
+    return ListView.builder(
+      itemCount: contacts.length,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      itemBuilder: (context, index) {
+        final user = contacts[index];
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12.0),
+          child: ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: CircleAvatar(
+              radius: 24,
+              backgroundImage: user.photoUrl != null ? NetworkImage(user.photoUrl!) : null,
+              child: user.photoUrl == null ? Text(user.name[0]) : null,
+            ),
+            title: Text(user.name, style: const TextStyle(fontWeight: FontWeight.w500)),
+            trailing: const Icon(Icons.info_outline, color: Colors.blue),
+            onTap: () => _showContactMenu(user),
           ),
         );
       },

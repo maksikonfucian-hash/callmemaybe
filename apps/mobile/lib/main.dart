@@ -23,13 +23,28 @@ class MyApp extends StatelessWidget {
       child: Consumer<AppProvider>(
         builder: (context, provider, child) => MaterialApp(
           title: 'Call Me Maybe',
+          debugShowCheckedModeBanner: false,
           theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: const Color(0xFF007AFF),
+              primary: const Color(0xFF007AFF),
+            ),
+            scaffoldBackgroundColor: const Color(0xFFF2F2F7),
             useMaterial3: true,
+            appBarTheme: const AppBarTheme(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              centerTitle: true,
+              titleTextStyle: TextStyle(
+                color: Colors.black,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
           darkTheme: ThemeData.dark().copyWith(
             colorScheme: ColorScheme.fromSeed(
-              seedColor: Colors.deepPurple,
+              seedColor: const Color(0xFF007AFF),
               brightness: Brightness.dark,
             ),
             useMaterial3: true,
@@ -42,8 +57,8 @@ class MyApp extends StatelessWidget {
             GlobalCupertinoLocalizations.delegate,
           ],
           supportedLocales: const [
-            Locale('en', ''),
             Locale('ru', ''),
+            Locale('en', ''),
           ],
           home: const HomeScreen(),
         ),

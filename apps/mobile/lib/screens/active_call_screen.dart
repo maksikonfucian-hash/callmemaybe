@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// Screen for active video call.
 class ActiveCallScreen extends StatefulWidget {
   final String peerName;
 
@@ -11,101 +10,93 @@ class ActiveCallScreen extends StatefulWidget {
 }
 
 class _ActiveCallScreenState extends State<ActiveCallScreen> {
-  bool isMuted = false;
-  bool isCameraFlipped = false;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
-          // Full screen peer video (placeholder)
-          Container(
-            color: Colors.black,
-            child: const Center(
-              child: Text(
-                'Peer Video',
-                style: TextStyle(color: Colors.white, fontSize: 24),
+          // Full screen peer video (Placeholder image)
+          Positioned.fill(
+            child: Image.network(
+              'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1000&auto=format&fit=crop',
+              fit: BoxFit.cover,
+            ),
+          ),
+          // Gradient overlay for better visibility of controls
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.black.withOpacity(0.3),
+                    Colors.transparent,
+                    Colors.transparent,
+                    Colors.black.withOpacity(0.5),
+                  ],
+                  stops: const [0.0, 0.2, 0.8, 1.0],
+                ),
               ),
             ),
           ),
-          // Top overlay
+          // Small local video preview
           Positioned(
-            top: 50,
-            left: 20,
-            right: 20,
-            child: Row(
-              children: [
-                const CircleAvatar(child: Icon(Icons.person)),
-                const SizedBox(width: 16),
-                Text(
-                  widget.peerName,
-                  style: const TextStyle(color: Colors.white, fontSize: 20),
-                ),
-              ],
-            ),
-          ),
-          // Floating own video
-          Positioned(
-            top: 100,
+            bottom: 120,
             right: 20,
             child: Container(
-              width: 120,
-              height: 160,
-              color: Colors.grey,
-              child: const Center(
-                child: Text('Own Video'),
+              width: 100,
+              height: 150,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.white24, width: 1),
+                image: const DecorationImage(
+                  image: NetworkImage('https://i.pravatar.cc/150?img=32'),
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
           ),
-          // Bottom controls
+          // Call Controls
           Positioned(
-            bottom: 50,
+            bottom: 40,
             left: 20,
             right: 20,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                FloatingActionButton(
-                  onPressed: () {
-                    // Effects placeholder
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Effects')),
-                    );
-                  },
-                  child: const Icon(Icons.filter),
-                ),
-                FloatingActionButton(
-                  onPressed: () {
-                    setState(() {
-                      isMuted = !isMuted;
-                    });
-                  },
-                  backgroundColor: isMuted ? Colors.red : null,
-                  child: Icon(isMuted ? Icons.mic_off : Icons.mic),
-                ),
-                FloatingActionButton(
-                  onPressed: () {
-                    setState(() {
-                      isCameraFlipped = !isCameraFlipped;
-                    });
-                  },
-                  child: const Icon(Icons.flip_camera_android),
-                ),
-                FloatingActionButton(
-                  onPressed: () {
-                    // End call
-                    Navigator.of(context).pop();
-                    // TODO: Add to call history
-                  },
-                  backgroundColor: Colors.red,
-                  child: const Icon(Icons.call_end),
-                ),
+                _buildCallAction(Icons.auto_awesome, 'Effects', Colors.grey.withOpacity(0.3)),
+                _buildCallAction(Icons.mic, 'Mute', Colors.grey.withOpacity(0.3)),
+                _buildCallAction(Icons.flip_camera_android, 'Flip', Colors.grey.withOpacity(0.3)),
+                _buildCallAction(Icons.call_end, 'End', Colors.red, isEnd: true),
               ],
             ),
           ),
+          // Info overlay
+          Positioned(
+            top: 60,
+            left: 24,
+            child: const Icon(Icons.info_outline, color: Colors.white, size: 28),
+          ),
         ],
       ),
+    );
+  }
+
+  Widget _buildCallAction(IconData icon, String label, Color color, {bool isEnd = false}) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 56,
+          height: 56,
+          decoration: BoxDecoration(
+            color: color,
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, color: Colors.white, size: 28),
+        ),
+      ],
     );
   }
 }
