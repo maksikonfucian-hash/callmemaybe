@@ -66,6 +66,12 @@ dependencies:
   # Sharing
   share_plus: ^10.0.0
 
+  # Supabase for backend
+  supabase_flutter: ^2.3.0
+
+  # WebRTC for native calls
+  flutter_webrtc: ^0.12.0
+
   # Local packages
   core:
     path: ../../packages/core
@@ -73,6 +79,8 @@ dependencies:
     path: ../../packages/features/contacts
   signaling:
     path: ../../packages/signaling
+  webrtc_engine:
+    path: ../../packages/webrtc_engine
 
 dev_dependencies:
   flutter_test:
