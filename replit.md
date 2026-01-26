@@ -1,42 +1,73 @@
-# callmemaybe
+# Call Me Maybe
 
-Flutter MVP for 1-on-1 audio/video calls with WebRTC Mesh + LiveKit.
+Flutter MVP для 1-на-1 аудио/видео звонков с WebRTC Mesh P2P и LiveKit SFU fallback.
 
-## Project Overview
+## Обзор проекта
 
-This is a Flutter monorepo project using Melos for package management. It supports multiple platforms including web, mobile (iOS/Android), and desktop.
+Monorepo Flutter приложение с поддержкой видео/аудио звонков. Использует Clean Architecture + MVVM паттерн с модульной структурой через Melos.
 
-## Project Structure
+## Структура проекта
 
 ```
 ├── apps/
-│   └── mobile/          # Main Flutter application
-│       └── lib/         # Application source code
-│       └── web/         # Web-specific assets
-│       └── build/web/   # Built web application
+│   └── mobile/                    # Основное Flutter приложение
+│       ├── lib/
+│       │   ├── main.dart          # Точка входа
+│       │   ├── screens/           # UI экраны
+│       │   │   ├── home_screen.dart
+│       │   │   ├── settings_tab.dart
+│       │   │   └── active_call_screen.dart
+│       │   ├── providers/         # Провайдеры состояния
+│       │   │   └── app_provider.dart
+│       │   └── services/          # Сервисы приложения
+│       │       ├── webrtc_service.dart   # WebRTC P2P
+│       │       ├── livekit_service.dart  # LiveKit SFU
+│       │       └── supabase_service.dart # Supabase backend
+│       └── build/web/             # Собранное веб-приложение
 ├── packages/
-│   ├── core/            # Shared entities, repositories, usecases
-│   ├── signaling/       # WebRTC signaling logic
-│   ├── webrtc_engine/   # WebRTC integration with JS and LiveKit
-│   └── features/
-│       └── contacts/    # Contacts feature module
-├── js/
-│   └── webrtc/          # JavaScript WebRTC logic
-└── melos.yaml           # Monorepo configuration
+│   ├── core/                      # Общие сущности и ошибки
+│   │   ├── entities/user.dart
+│   │   └── failures/failure.dart
+│   ├── signaling/                 # WebRTC сигнализация
+│   │   ├── models/signaling_message.dart
+│   │   └── repositories/signaling_repository.dart
+│   ├── webrtc_engine/             # WebRTC интеграция
+│   └── contacts/                  # Модуль контактов
+├── js/webrtc/                     # JavaScript WebRTC логика
+└── melos.yaml                     # Конфигурация monorepo
 ```
 
-## Technology Stack
+## Технологический стек
 
-- **Framework**: Flutter 3.32.0 with Dart 3.8.0
+- **Framework**: Flutter 3.32.0 / Dart 3.8.0
 - **State Management**: Provider
 - **WebRTC**: flutter_webrtc + LiveKit client
-- **Architecture**: MVVM pattern with clean architecture
+- **Архитектура**: Clean Architecture + MVVM
+- **Error Handling**: fpdart (Either pattern)
+- **Backend**: Supabase (Realtime для сигнализации)
+- **Локализация**: ru/en через flutter_localizations
 
-## Running the Application
+## Функциональность
 
-### Development (Web)
-The application runs as a Flutter web app served on port 5000.
+### Режимы звонков
+- **P2P Mesh** (по умолчанию) - прямое WebRTC соединение
+- **LiveKit SFU** - через медиа-сервер для лучшей стабильности
 
+### Настройки
+- Тема: светлая/тёмная/системная
+- Язык: русский/английский
+- Качество видео: низкое (320p) / среднее (480p) / высокое (720p)
+- Уведомления: вкл/выкл
+
+### Экраны
+- Друзья - список контактов
+- Звонки - история вызовов
+- Настройки - персонализация
+- Активный звонок - видео с контролами
+
+## Запуск приложения
+
+### Веб (разработка)
 ```bash
 cd apps/mobile
 flutter pub get
@@ -44,34 +75,52 @@ flutter build web --base-href "/"
 cd build/web && python3 -m http.server 5000 --bind 0.0.0.0
 ```
 
-### Build Commands
-
+### Сборка и тесты
 ```bash
-# Get dependencies
+# Зависимости
 cd apps/mobile && flutter pub get
 
-# Build web
-flutter build web --base-href "/"
+# Сборка веб
+flutter build web --release
 
-# Run analysis
+# Анализ кода
 flutter analyze
 
-# Run tests
+# Тесты
 flutter test
 ```
 
-## Dependencies
+## Зависимости
 
-Key dependencies:
-- `livekit_client`: WebRTC SFU integration
-- `flutter_js`: JavaScript integration for WebRTC logic
-- `provider`: State management
-- `fpdart`: Functional programming for error handling
-- `http`: HTTP client
-- `shared_preferences`: Local storage
+### Основные
+- `livekit_client` - LiveKit SFU клиент
+- `flutter_webrtc` - WebRTC для Flutter
+- `provider` - State management
+- `fpdart` - Функциональное программирование
+- `supabase_flutter` - Supabase SDK
+- `shared_preferences` - Локальное хранилище
 
-## Environment
+### Для разработки
+- `json_annotation` / `json_serializable` - JSON сериализация
+- `build_runner` - Кодогенерация
+- `equatable` - Сравнение объектов
+
+## Окружение
 
 - Dart SDK: ^3.8.0
 - Flutter: 3.32.0
-- Platform: Web (also supports iOS, Android, Linux, macOS, Windows)
+- Платформы: Web, iOS, Android, Linux, macOS, Windows
+
+## Важные решения
+
+1. **fpdart Either** - все сервисы возвращают Either<Failure, T> для обработки ошибок
+2. **Supabase Realtime** - используется для сигнализации вместо отдельного WebSocket сервера
+3. **Анонимная аутентификация** - для MVP без необходимости регистрации
+4. **Комментарии на русском** - dartdoc документация на русском языке
+
+## Последние изменения
+
+- 2026-01-26: Добавлены WebRTC и LiveKit сервисы
+- 2026-01-26: Обновлены настройки с режимом звонков и качеством видео
+- 2026-01-26: Исправлены конфликты импортов User между core и supabase
+- 2026-01-26: Добавлены unit-тесты для core и signaling модулей
