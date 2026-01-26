@@ -1,9 +1,16 @@
-/// Signaling package for WebRTC signaling.
-/// Handles offer, answer, ICE candidates exchange via WebSocket.
+/// Пакет сигнализации для WebRTC
+/// 
+/// Обеспечивает обмен SDP offer/answer и ICE кандидатами
+/// между пирами через Supabase Realtime.
+/// 
+/// Основные компоненты:
+/// - [SignalingMessage] - модель сигнального сообщения
+/// - [SignalingRepository] - репозиторий для работы с сигнализацией
+/// - [SupabaseSignalingRepository] - реализация через Supabase
 library signaling;
 
-/// Repositories
+/// Репозитории для работы с сигнализацией
 export 'repositories/signaling_repository.dart';
 
-/// Models
+/// Модели данных для сигнальных сообщений
 export 'models/signaling_message.dart';
